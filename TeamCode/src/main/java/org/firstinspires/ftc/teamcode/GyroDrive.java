@@ -6,7 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
+import org.firstinspires.ftc.teamcode.lib.CameraStreamProcessor;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp(name="GyroDrive")
 public class GyroDrive extends OpMode {
@@ -17,6 +25,10 @@ public class GyroDrive extends OpMode {
     private Odometry Odometry;
 
     private IMU gyro = null;
+
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+    private AprilTagDetection desiredTag = null; //Set a target
 
     @Override
     public void init() {
@@ -55,6 +67,17 @@ public class GyroDrive extends OpMode {
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,
                         RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         gyro.initialize(parameters);
+
+        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag.setDecimation(2); //TODO: Test for best value
+        final CameraStreamProcessor cameraStream = new CameraStreamProcessor();
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Camera"))
+                //.addProcessor(aprilTag)
+                .addProcessors(aprilTag, cameraStream)
+                .build();
+
+        FtcDashboard.getInstance().startCameraStream(cameraStream, 30);
     }
 
     @Override
@@ -79,6 +102,8 @@ public class GyroDrive extends OpMode {
         backLeft.setPower(BLPower);
         frontRight.setPower(FRPower);
         backRight.setPower(BRPower);
+
+        telemetry.addData("April Tag Detect:", aprilTag.getDetections().toString());
 
         telemetry.addData("X Pos:", Odometry.xCoord());
         telemetry.addData("Y Pos", Odometry.yCoord());

@@ -8,8 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.Constants.compRobot;
+import org.firstinspires.ftc.teamcode.Constants;
+
 @TeleOp(name="OdoDrive")
 public class OdoDrive extends OpMode {
+    private Constants constants;
+
     private DcMotor frontLeft;
     private DcMotor backLeft;
     private DcMotor frontRight;
@@ -37,10 +42,10 @@ public class OdoDrive extends OpMode {
     public void init(){
 
         //Drive Motor Setup - Used the name from FeverDream
-        frontLeft = hardwareMap.dcMotor.get("FrontLeftDrive");
-        backLeft = hardwareMap.dcMotor.get("BackLeftDrive");
-        frontRight = hardwareMap.dcMotor.get("FrontRightDrive");
-        backRight = hardwareMap.dcMotor.get("BackRightDrive");
+//        frontLeft = hardwareMap.dcMotor.get("FrontLeftDrive");
+//        backLeft = hardwareMap.dcMotor.get("BackLeftDrive");
+//        frontRight = hardwareMap.dcMotor.get("FrontRightDrive");
+//        backRight = hardwareMap.dcMotor.get("BackRightDrive");
 
         //frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -142,10 +147,10 @@ public class OdoDrive extends OpMode {
         double FRPower = (finalY - finalX - h) / denominator;
         double BRPower = (finalY + finalX - h) / denominator;
 
-        frontLeft.setPower(FLPower);
-        backLeft.setPower(BLPower);
-        frontRight.setPower(FRPower);
-        backRight.setPower(BRPower);
+        compRobot.frontLeft.setPower(FLPower);
+        compRobot.backLeft.setPower(BLPower);
+        compRobot.frontRight.setPower(FRPower);
+        compRobot.backRight.setPower(BRPower);
 
         telemetry.addData("X Pos:", xCoord);
         telemetry.addData("Y Pos", yCoord);
