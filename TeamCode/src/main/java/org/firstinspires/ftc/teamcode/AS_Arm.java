@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="AS_Arm")
 public class AS_Arm extends OpMode {
 
-    InterpLUT IntP, IntI, IntD, IntF;
+    InterpLUT IntP = new InterpLUT(), IntI = new InterpLUT(), IntD = new InterpLUT(), IntF = new InterpLUT();
 
     DcMotorEx armMotor;
     DcMotorEx extenderLeft, extenderRight; //TODO Check 560 ticks per rev
@@ -24,11 +24,11 @@ public class AS_Arm extends OpMode {
     PIDFController Pid;
 
     //Set in dashboard
-    public static double[] pid1;
+    public static double[] pid1 = new double[]{1,1,1,1};
     public static double ff;
     public static double target;
 
-    double TICKS_PER_DEGREE = 8192.0 / 360.0;
+    double TICKS_PER_DEGREE = 360.0/8192.0;
 
     @Override
     public void init() {
@@ -41,29 +41,35 @@ public class AS_Arm extends OpMode {
 
         //TODO - Not sure which one needs to be reversed.
         //extenderLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        extenderRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //extenderRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pid1 = new double[]{0, 0, 0, 0};
+        pid1 = new double[]{0.1, 0.1, 0.1, 0.1};
 
-        IntP.add(0, pid1[0]);
-        IntI.add(0, pid1[1]);
-        IntD.add(0, pid1[2]);
-        IntF.add(0, pid1[3]);
+        IntP.add(pid1[0], -1);
+        IntP.add(pid1[0], 1000);
+        IntI.add(pid1[1],-1);
+        IntI.add(pid1[1], 1000);
+        IntD.add(pid1[2], -1);
+        IntD.add(pid1[2],1000);
+        IntF.add(pid1[3],-1);
+        IntF.add(pid1[3], 1000);
 
         IntP.createLUT(); IntI.createLUT(); IntD.createLUT(); IntF.createLUT();
 
         ff = 0; target = 0;
+
+        Pid = new PIDFController(0,0,0,0);
     }
 
     @Override
     public void loop() {
         double armPos = armMotor.getCurrentPosition();
 
-        Pid.setPIDF(
-                IntP.get(armPos),
+        Pid.setPIDF(0.1,0.1,0.1,0.1);
+                /*IntP.get(armPos),
                 IntI.get(armPos),
                 IntD.get(armPos),
-                IntF.get(armPos));
+                IntF.get(armPos))*/;
 
         //TODO Add extension and get a extension PID - Kinda my whole idea behind using interpolation.
 
@@ -82,11 +88,12 @@ public class AS_Arm extends OpMode {
 
         telemetry.addData("Encoder Pos:", armMotor.getCurrentPosition());
         telemetry.addData("Setpoint:", target);
+        telemetry.addData("Deg", (armMotor.getCurrentPosition() * TICKS_PER_DEGREE) % 360);
 
-        telemetry.addData("IntP:", IntP.get(armPos));
+        /*telemetry.addData("IntP:", IntP.get(armPos));
         telemetry.addData("IntI:", IntI.get(armPos));
         telemetry.addData("IntD:", IntD.get(armPos));
-        telemetry.addData("IntF:", IntF.get(armPos));
+        telemetry.addData("IntF:", IntF.get(armPos));*/
 
         extender(1);
     }
