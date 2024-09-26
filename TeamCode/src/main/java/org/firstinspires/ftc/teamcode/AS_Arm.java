@@ -45,14 +45,16 @@ public class AS_Arm extends OpMode {
 
         pid1 = new double[]{0.1, 0.1, 0.1, 0.1};
 
-        IntP.add(pid1[0], -1);
-        IntP.add(pid1[0], 1000);
-        IntI.add(pid1[1],-1);
-        IntI.add(pid1[1], 1000);
-        IntD.add(pid1[2], -1);
-        IntD.add(pid1[2],1000);
-        IntF.add(pid1[3],-1);
-        IntF.add(pid1[3], 1000);
+        armMotor.getCurrentPosition();
+
+        IntP.add(-20, pid1[0]);
+        IntP.add(365, pid1[0]);
+        IntI.add(-20,pid1[1]);
+        IntI.add(365, pid1[1]);
+        IntD.add(-20, pid1[2]);
+        IntD.add(365, pid1[2]);
+        IntF.add(-20,pid1[3]);
+        IntF.add(365, pid1[3]);
 
         IntP.createLUT(); IntI.createLUT(); IntD.createLUT(); IntF.createLUT();
 
@@ -64,17 +66,18 @@ public class AS_Arm extends OpMode {
     @Override
     public void loop() {
         double armPos = armMotor.getCurrentPosition();
+        double armDeg = (armPos * TICKS_PER_DEGREE) % 360;
 
-        Pid.setPIDF(0.1,0.1,0.1,0.1);
-                /*IntP.get(armPos),
+        Pid.setPIDF(
+                IntP.get(armPos),
                 IntI.get(armPos),
                 IntD.get(armPos),
-                IntF.get(armPos))*/;
+                IntF.get(armPos));
 
         //TODO Add extension and get a extension PID - Kinda my whole idea behind using interpolation.
 
         if(gamepad1.a){ //Arm with Dashboard PID
-        double output = Pid.calculate(armPos,target); //Will be pid1 setpoint
+            double output = Pid.calculate(armPos,target); //Will be pid1 setpoint
             armMotor.setPower(output);
         }else if (gamepad1.y){
             double output = Pid.calculate(armPos,0); //pid[x] setpoint //TODO Use to get more pid value ranges
