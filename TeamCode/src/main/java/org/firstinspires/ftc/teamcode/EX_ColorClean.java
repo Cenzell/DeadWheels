@@ -17,6 +17,7 @@ import org.opencv.core.RotatedRect;
 
 import java.util.List;
 
+@TeleOp(name = "TS_ColorClean")
 public class EX_ColorClean extends LinearOpMode {
     @Override
     public void runOpMode()
@@ -84,7 +85,7 @@ public class EX_ColorClean extends LinearOpMode {
         VisionPortal portal = new VisionPortal.Builder()
                 .addProcessor(colorLocator)
                 .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Camera"))
                 .build();
 
         telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.

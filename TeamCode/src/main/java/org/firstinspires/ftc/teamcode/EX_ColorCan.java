@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -51,7 +52,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Vision Color-Locator")
+@TeleOp(name = "EX_ColorCam")
 public class EX_ColorCan extends LinearOpMode
 {
     @Override
@@ -59,29 +60,26 @@ public class EX_ColorCan extends LinearOpMode
     {
 
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
+                .setTargetColorRange(ColorRange.YELLOW)// use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)// exclude blobs inside blobs
+                //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.8, 0.8, 0.8, -0.8))  // search central 1/4 of camera view
                 .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .setBlurSize(5)// Smooth the transitions between different colors in image
                 .build();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        final CameraStreamProcessor processor = new CameraStreamProcessor();
+        //final CameraStreamProcessor processor = new CameraStreamProcessor();
 
         VisionPortal portal = new VisionPortal.Builder()
                 .addProcessor(colorLocator)
-                .addProcessor(processor)
+                //.addProcessor(processor)
                 .setCameraResolution(new Size(320, 240))
                 .setCamera(hardwareMap.get(WebcamName.class, "Camera"))
                 .build();
 
-        OpenCvWebcam camera;
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Camera"));
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
-
-        FtcDashboard.getInstance().startCameraStream(processor, 0);
+        FtcDashboard.getInstance().startCameraStream(portal, 0);
 
         telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
