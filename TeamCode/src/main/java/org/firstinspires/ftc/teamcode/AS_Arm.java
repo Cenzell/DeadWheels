@@ -8,9 +8,6 @@ import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
 @TeleOp(name="AS_Arm")
@@ -26,6 +23,8 @@ public class AS_Arm extends OpMode {
     //TODO Limit C=42/cos(x)
 
     PIDFController Pid;
+
+    boolean debugPID = false;
 
     //Set in dashboard
     public static double[] pid1 = new double[]{0,0,0,0};
@@ -125,15 +124,17 @@ public class AS_Arm extends OpMode {
         telemetry.addData("Deg", armDeg);
         telemetry.addData("Output:", Pid.calculate(armPos,target));
 
-        telemetry.addData("IntP:", IntP.get(armDeg));
-        telemetry.addData("IntI:", IntI.get(armDeg));
-        telemetry.addData("IntD:", IntD.get(armDeg));
-        telemetry.addData("IntF:", IntF.get(armDeg));
+        if(debugPID){
+            telemetry.addData("IntP:", IntP.get(armDeg));
+            telemetry.addData("IntI:", IntI.get(armDeg));
+            telemetry.addData("IntD:", IntD.get(armDeg));
+            telemetry.addData("IntF:", IntF.get(armDeg));
 
-        telemetry.addData("P:", Pid.getP());
-        telemetry.addData("I:", Pid.getI());
-        telemetry.addData("D:", Pid.getD());
-        telemetry.addData("F:", Pid.getF());
+            telemetry.addData("P:", Pid.getP());
+            telemetry.addData("I:", Pid.getI());
+            telemetry.addData("D:", Pid.getD());
+            telemetry.addData("F:", Pid.getF());
+        }
 
         //extender(0);
     }
